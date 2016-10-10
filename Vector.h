@@ -4,92 +4,90 @@
 #include <iostream>
 #include <cmath>
 
-class Vector  
+class Vector
 {
-public:
-	
+  public:
     double x;
     double y;
-    double z;
 
+    // constructors
+    Vector()
+    {
+        Vector(0.0, 0.0);
+    }
 
-        // constructors
-        Vector () 
-        {
-            Vector(0.0, 0.0, 0.0);
-        
-        }
-        
-        Vector (double _x, double _y){
+    Vector(double X, double Y)
+    {
 
-            Vector(_x, _y, 0.0);
-        }
+        this->x = X;
+        this->y = Y;
+    }
 
-        Vector (double X, double Y, double Z) {
-           
-            this->x = X; 
-            this->y = Y; 
-            this->z = Z;
-       
-        }
+    /*************************************************/
 
-/*************************************************/
+    // vector addition
+    Vector operator+(const Vector v)
+    {
 
-        // vector addition
-        Vector operator+ (const Vector v)  {
-            
-            return Vector ( x + v.x, 
-                            y + v.y, 
-                            z + v.z);
-        }
+        return Vector(x + v.x,
+                      y + v.y);
+    }
 
-        // vector subtraction
-        Vector operator- (const Vector v)  {
+    // vector subtraction
+    Vector operator-(const Vector v)
+    {
 
-            return Vector ( x - v.x,
-                            y - v.y, 
-                            z - v.z);
-        }
+        return Vector(x - v.x,
+                      y - v.y);
+    }
 
-        Vector operator* (const Vector v)  {
-        
-            return Vector(  x * v.x, 
-                            y * v.y, 
-                            z * v.z);
-        }
+    Vector operator*(const Vector v)
+    {
 
-        // vector times scalar product (scale length of vector times argument)
-        Vector operator* (const double s)  {
-        
-            return Vector ( x * s, 
-                            y * s, 
-                            z * s);
-        }
+        return Vector(x * v.x,
+                      y * v.y);
+    }
 
-        // vector divided by a scalar (divide length of vector by argument)
-        Vector operator/ (const double s)  {
-        
-            return Vector ( x / s, 
-                            y / s, 
-                            z / s);
-        }
+    // vector times scalar product (scale length of vector times argument)
+    Vector operator*(const double s)
+    {
 
-        // dot product
-        double dot (const Vector v)  {
-        
-            return (x * v.x) + (y * v.y) + (z * v.z);
-        
-        }
+        return Vector(x * s,
+                      y * s);
+    }
 
-        double length(){
-      
-            return std::sqrt( x * x + y * y + z * z );
-        }
-        void print(){
-         
-            std::cout << "( " << x << " " << y << " " << z << " )" << std::endl;
+    Vector operator+(const double s)
+    {
 
-        }
+        return Vector(x + s,
+                      y + s);
+    }
+
+    // vector divided by a scalar (divide length of vector by argument)
+    Vector operator/(const double s)
+    {
+
+        return Vector(x / s,
+                      y / s);
+    }
+
+    // dot product
+    double dot(const Vector v)
+    {
+
+        return (x * v.x) + (y * v.y);
+    }
+
+    double length()
+    {
+
+        return std::sqrt(x * x + y * y);
+    }
+    void print()
+    {
+
+        std::cout << "( " << x << " " << y << " )" << std::endl;
+    }
 };
 
 #endif

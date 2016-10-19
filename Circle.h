@@ -25,14 +25,16 @@ POINT2D initPoint2D(GLfloat x, GLfloat y)
 
 class Circle
 {
-  private:
+  
   public:
     Vector center;
     Vector speedVector;
     GLdouble radius;
     int n;
 
-    Circle(void){};
+    Circle(void){
+        
+    };
 
     Circle(Vector _center, Vector _speedVector, GLdouble _radius, int _n)
     {
@@ -102,22 +104,27 @@ class Circle
     GLdouble distanceFromLine(Line l)
     {
 
-        /*  GLdouble distance;
+        GLdouble distance;
+        Vector normal = l.getNormalVector();
         //c =  -Ax0 - By0 
-        GLdouble C =  l.normal.x  * center.x - l.normal.y * center.y;
+        GLdouble A = normal.x;
+        GLdouble B = normal.y;
 
-        distance =  fabs( l.normal.x * center.x + l.normal.y * center.y + C)  / 
-                        sqrt( l.normal.x * l.normal.x + l.normal.y * l.normal.y );
+        GLdouble x0 = center.x;
+        GLdouble y0 = center.y;
+
+        GLdouble C =  -A * l.startPoint.x - B * l.startPoint.y;
+        distance =  abs( A * x0 + B * y0 + C) / sqrt( A*A + B*B );
 
 
-        return distance;      */
-
+        return distance;      
+        /*
         double normalLength = hypot(l.endPoint.x - l.startPoint.x, l.endPoint.y - l.startPoint.y);
 
         double distance = abs((double)((center.x - l.startPoint.x) * (l.endPoint.y - l.startPoint.y) -
                                        (center.y - l.startPoint.y) * (l.endPoint.x - l.startPoint.x)) /
                               normalLength);
-        return distance;
+        return distance;*/
     }
 };
 

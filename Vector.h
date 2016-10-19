@@ -10,7 +10,7 @@ class Vector
     double x;
     double y;
 
-    // constructors
+    
     Vector()
     {
         Vector(0.0, 0.0);
@@ -25,7 +25,7 @@ class Vector
 
     /*************************************************/
 
-    // vector addition
+    
     Vector operator+(const Vector v)
     {
 
@@ -33,7 +33,7 @@ class Vector
                       y + v.y);
     }
 
-    // vector subtraction
+    
     Vector operator-(const Vector v)
     {
 
@@ -48,7 +48,7 @@ class Vector
                       y * v.y);
     }
 
-    // vector times scalar product (scale length of vector times argument)
+    
     Vector operator*(const double s)
     {
 
@@ -63,7 +63,6 @@ class Vector
                       y + s);
     }
 
-    // vector divided by a scalar (divide length of vector by argument)
     Vector operator/(const double s)
     {
 
@@ -71,12 +70,6 @@ class Vector
                       y / s);
     }
 
-    // dot product
-    double dot(const Vector v)
-    {
-
-        return (x * v.x) + (y * v.y);
-    }
 
     double length()
     {

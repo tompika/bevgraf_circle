@@ -14,10 +14,9 @@ GLsizei winWidth = 800, winHeight = 600;
 
 GLint keyStates[256];
 
-GLfloat delta = 1;
+GLfloat delta = 3;
 
 GLint radius = 20;
-GLint radiusPow2 = radius * 2;
 
 /*
 GLint lineHor_x0 = 0;
@@ -49,12 +48,12 @@ void init()
     glShadeModel(GL_FLAT);
 
     p1.x = 0;
-    p1.y = (double)winHeight / 2;
+    p1.y = winHeight / 2;
 
-    //std::cout << "Horline vec length: " <<  p1.length() << std::endl;
 
-    p2.x = (double)winWidth;
-    p2.y = (double)winHeight / 2;
+
+    p2.x = winWidth;
+    p2.y = winHeight / 2;
 
     p3.x = winWidth / 2;
     p3.y = 0;
@@ -65,12 +64,8 @@ void init()
     horLine = Line(p1, p2, 1);
     verLine = Line(p3, p4, 1);
 
-    /*  std::cout << "HORIZONT LINE: "<< std::endl;
-    horLine.print();
 
-    std::cout << "VERTIC LINE: "<< std::endl;
-    verLine.print();
-*/
+
 }
 
 void drawLine()
@@ -85,6 +80,8 @@ void drawLine()
     glVertex2d(horLine.endPoint.x, horLine.endPoint.y);
     glVertex2d(verLine.startPoint.x, verLine.startPoint.y);
     glVertex2d(verLine.endPoint.x, verLine.endPoint.y);
+
+    
 
     glEnd();
 }
@@ -105,37 +102,50 @@ void keyOperations()
     if (keyStates['a'])
     {
 
+        if( verLine.startPoint.x > 0){
         verLine.startPoint.x -= delta;
         verLine.endPoint.x += delta;
 
+        verLine.refreshVectors();
+        }
         //verLine.getNormalVector().print();
     }
 
     if (keyStates['d'])
     {
 
+        if( verLine.startPoint.x < 800 ){
         verLine.startPoint.x += delta;
         verLine.endPoint.x -= delta;
 
+        verLine.refreshVectors();
+        }
         //verLine.getNormalVector().print();
     }
 
     if (keyStates['s'])
     {
 
+        if(  horLine.startPoint.y > 0){
         horLine.startPoint.y -= delta;
         horLine.endPoint.y += delta;
+
+
+        horLine.refreshVectors();
+        }
 
         //horLine.getNormalVector().print();
     }
 
     if (keyStates['w'])
     {
-
+        if( horLine.startPoint.y < 600 ){
         horLine.startPoint.y += delta;
         horLine.endPoint.y -= delta;
 
-        // verLine.getNormalVector().print();
+        horLine.refreshVectors();
+        }
+        //horLine.getNormalVector().print();
     }
 
     glutPostRedisplay();
@@ -150,20 +160,55 @@ void display()
     glColor3f(0.000, 1.000, 0.000);
     glPointSize(4);
     glBegin(GL_POINTS);
-    for (int i = 1; i <= winWidth; i += 8)
-        for (int j = 1; j <= winHeight; j += 8)
+    for (int i = 1; i <= winWidth; i += 10)
+        for (int j = 1; j <= winHeight; j += 10)
         {
-            /*   GLdouble C = firstHor.normal.x * i - firstHor.normal.y * j;
-                GLdouble e = firstHor.normal.x * i + firstHor.normal.y * j + C;
 
-                GLdouble C2 = verLine.normal.x * i - verLine.normal.y * j;
-                GLdouble e2 = verLine.normal.x * i + verLine.normal.y * j + C2;
+            
+
+            //C = -Ax0 - By0
+
+            //e: A x + By + C = 0
+            
+
+            GLdouble C,e, C2, e2;
+            GLdouble A = horLine.getNormalVector().x; 
+            GLdouble B = horLine.getNormalVector().y;
+
+            GLdouble A2 = verLine.getNormalVector().x;
+            GLdouble B2 = verLine.getNormalVector().y;
+            
+            GLdouble x0 = horLine.startPoint.x;
+            GLdouble y0 = horLine.startPoint.y;
+
+            GLdouble x02 = verLine.startPoint.x;
+            GLdouble y02 = verLine.startPoint.y;
+
+            
+            C = -1*A * x0 - (B * y0);
+
+            C2 = -1*A2 * x02 - (B * y02);
+  
+            e = (A * i) + (B * j) + C;
+
+
+            e2 = (A2 * i) + (B2 * j) + C2;
+
+             
+
+            if ( e < 0 && e2 < 0)
+                glColor3f(0.0, 1.0, 0.0);
+
+            else if( e < 0 && e2 > 0)
+                glColor3f(1.0, 0.0, 0.0);
+            
+            else if( e > 0 && e2 < 0)
+                glColor3f(1.0, 0.0, 1.0); 
                 
-                if ( e > 0 )
-                    glColor3f( 0.0, 0.0, 1.0);
-                
-                if ( e2 > 0 )
-                    glColor3f(0.0, 0.0, 1.0);*/
+            else
+                glColor3f(0.0, 0.0, 1.0);
+
+
 
             glVertex2i(i, j);
         }
@@ -197,11 +242,13 @@ void update(int n)
         double horDst = allCicrle[i].distanceFromLine(horLine);
         double verDst = allCicrle[i].distanceFromLine(verLine);
 
+
+
         if (horDst < radius || verDst < radius)
         {
 
             double Rx, Ry;
-            Vector cirSpedVec;
+            Vector cirSpedVec, norm;
             cirSpedVec.x = allCicrle[i].speedVector.x;
             cirSpedVec.y = allCicrle[i].speedVector.y;
 
@@ -210,16 +257,13 @@ void update(int n)
 
             if (horDst < radius)
             {
-                Vector norm;
-                norm = horLine.getNormalVector();
 
-                //Rx =  - (cirSpedVec.x) - 2 * ((cirSpedVec.x * norm.x + cirSpedVec.y * norm.y) / norm.length()  )* norm.x ;
-                //Ry =  - (cirSpedVec.y) - 2 * ((cirSpedVec.x * norm.x + cirSpedVec.y * norm.y) / norm.length()  )* norm.y ;
+                norm = horLine.getDirectionVector();
 
-                x1 = cirSpedVec.x * -1;
-                y1 = cirSpedVec.y * -1;
+                x1 = cirSpedVec.x; //* -1;
+                y1 = cirSpedVec.y; //* -1;
 
-                b = cirSpedVec * -1;
+                b = cirSpedVec; //* -1;
                 a = norm;
 
                 x2 = norm.x;
@@ -235,13 +279,12 @@ void update(int n)
             if (verDst < radius)
             {
 
-                Vector norm;
-                norm = verLine.getNormalVector();
+                norm = verLine.getDirectionVector();
 
-                x1 = cirSpedVec.x * -1;
-                y1 = cirSpedVec.y * -1;
+                x1 = cirSpedVec.x; // * -1;
+                y1 = cirSpedVec.y; // * -1;
 
-                b = cirSpedVec * -1;
+                b = cirSpedVec; //* -1;
                 a = norm;
 
                 x2 = norm.x;
@@ -253,10 +296,6 @@ void update(int n)
 
                 Rx = (b.x) * -1 + 2 * (ab / (a.length() * a.length())) * a.x;
                 Ry = (b.y) * -1 + 2 * (ab / (a.length() * a.length())) * a.y;
-
-                /*
-                Rx =  - (cirSpedVec.x) - 2 * (ab  / norm.length())* norm.x ;
-                Ry =  - (cirSpedVec.y) - 2 * (ab  / norm.length())* norm.y ;*/
             }
 
             allCicrle[i].speedVector.x = Rx;
@@ -279,8 +318,6 @@ void processMouse(GLint button, GLint action, GLint xMouse, GLint yMouse)
 
         int randNum = rand() % (10 - 3 + 1) + 3;
 
-        //std::cout << randX << " " << randY << std::endl;
-        //std::cout << xMouse << " " << winHeight - yMouse << std::endl;
         Vector pos;
         pos.x = xMouse;
         pos.y = winHeight - yMouse;

@@ -35,8 +35,9 @@ class Line
         this->normal = normal;
     }
 
-    Vector getNormalVector()
-    {
+
+    void refreshVectors(){
+
 
         this->direction = endPoint - startPoint;
 
@@ -46,14 +47,20 @@ class Line
 
         this->normal = normal;
 
+      
+
+    }
+    
+    Vector getNormalVector()
+    {
+
         return this->normal;
     }
 
     Vector getDirectionVector()
     {
 
-        this->direction = this->endPoint - this->startPoint;
-
+      
         return this->direction;
     }
 
